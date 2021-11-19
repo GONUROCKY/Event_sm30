@@ -1,0 +1,51 @@
+*----------------------------------------------------------------------*
+***INCLUDE LZACV_MAT_APISF01.
+*----------------------------------------------------------------------*
+FORM f_save001.
+
+  DATA(lv_wa) = CORRESPONDING zactb_mat_apis( <table1> ).
+
+  SELECT SINGLE kurztext INTO @lv_wa-kurztext
+    FROM qpmt
+    WHERE zaehler = @lv_wa-zaehler
+    AND mkmnr = @lv_wa-mkmnr.
+
+  lv_wa-uname = sy-uname.
+  lv_wa-erdat = sy-datum.
+  lv_wa-erzet = sy-uzeit.
+
+  <table1> = lv_wa .
+
+*  TYPES: BEGIN OF lty_qpmt,
+*           zaehler  TYPE qpmt-zaehler,
+*           mkmnr    TYPE qpmt-mkmnr,
+*           kurztext TYPE qpmt-kurztext,
+*         END OF lty_qpmt.
+*  DATA: ltd_qpmt    TYPE STANDARD TABLE OF lty_qpmt,
+*        ltd_total   TYPE STANDARD TABLE OF ZACV_MAT_APIS WITH HEADER LINE.
+*
+*   CHECK line_index( ZACV_MAT_APIS_TOTAL[ ACTION = 'N' ] ) > 0.
+*
+*   ltd_total = ZACV_MAT_APIS_TOTAL[ ACTION = 'N' ].
+*
+*  CHECK TOTAL IS NOT INITIAL.
+*
+*  SELECT zaehler, mkmnr, kurztext INTO TABLE @ltd_qpmt "ZACTB_MAT_APIS-KURZTEXT
+*    FROM qpmt
+*    FOR ALL ENTRIES IN @ltd_total
+*    WHERE zaehler = @ltd_total-zaehler
+*    AND mkmnr = @ltd_total-mkmnr.
+*
+*  LOOP AT ZACV_MAT_APIS_TOTAL ASSIGNING FIELD-SYMBOL(<fs_test>)  WHERE ACTION = 'N' .
+*    TRY .
+*        <fs_test>-kurztext = ltd_qpmt[ zaehler = <fs_test>-zaehler mkmnr = <fs_test>-mkmnr ]-kurztext.
+*      CATCH cx_sy_itab_line_not_found .
+*    ENDTRY.
+*
+*    <fs_test>-uname = sy-uname.
+*    <fs_test>-erdat = sy-datum.
+*    <fs_test>-erzet = sy-tzone.
+*
+*  ENDLOOP.
+
+ENDFORM.
